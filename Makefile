@@ -3,7 +3,7 @@ name = tab-count.zip
 
 all: $(name)
 
-$(name).xpi: $(sources)
+$(name): $(sources)
 	-rm -f $(name)
 	7z u $@ $^
 
