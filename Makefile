@@ -5,7 +5,7 @@ all: $(name)
 
 $(name): $(sources)
 	-rm -f $(name)
-	7z u $@ $^
+	zip $@ $^
 
 install: all
 	firefox $(name)
