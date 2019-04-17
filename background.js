@@ -1,6 +1,6 @@
 'use strict';
 
-var canvas, tabcount = 0;
+var canvas, tabcount = 0, debugging = false;
 
 function oops(error) {
 	setCount("!");
@@ -31,12 +31,24 @@ function setCount(num) {
 	ctx.textBaseline = "top";
 	ctx.fillText(msg,0,0);
 	var imgdata = ctx.getImageData(0,0,canvas.width,canvas.height);
-	browser.browserAction.setIcon({imageData:imgdata});
+	if(!debugging) {
+		browser.browserAction.setIcon({imageData:imgdata});
+	}
 }
 
-canvas = document.createElement('canvas');
-setCount("?");
-browser.tabs.onCreated.addListener(plusTabs);
-browser.tabs.onRemoved.addListener(minusTabs);
-browser.tabs.query({}).then(countTabs, oops);
+if(typeof browser == "undefined") { // We are running in the test.html page
+	window.onload = function () {
+		debugging = true;
+		console.log("Detected debug page");
+		canvas = document.getElementById('canvas');
+		canvas.style.border = "thick solid red";
+		setCount("124 Oy"); // Some numbers, a capital letter, and a letter with a tail, to check if it fits.
+	};
+} else {
+	canvas = document.createElement('canvas');
+	setCount("?");
+	browser.tabs.onCreated.addListener(plusTabs);
+	browser.tabs.onRemoved.addListener(minusTabs);
+	browser.tabs.query({}).then(countTabs, oops);
+}
 
